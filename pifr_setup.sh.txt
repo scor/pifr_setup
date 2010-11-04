@@ -4,7 +4,7 @@
 # Based on setup instructions at https://docs.google.com/document/edit?id=1s2PG8GdWcovi9z8uCBiiHGBzALFQqt4noqLL4ADUbUw&hl=en
 
 SOURCES=http://randyfay.com/files/pifr.sources.list
-HOSTNAME=pifr-mysql
+HOSTNAME=$(date +%Y%m%d)$RANDOM-pifr-mysql
 
 echo "Setting up a PIFR client"
 if ! test -d ~/.ssh ; then
@@ -29,7 +29,7 @@ echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
 /usr/sbin/locale-gen
 
 wget $SOURCES -O /etc/apt/sources.list
-apt-get -qq -y update 
+apt-get -qq -y update
 apt-get -qq -y --force-yes install debian-backports-keyring
 apt-get -qq -y update
 apt-get -qq  -y -t lenny-backports install puppet
