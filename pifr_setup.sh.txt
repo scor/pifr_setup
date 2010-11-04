@@ -2,6 +2,7 @@
 # PIFR puppet configuration script
 # rfay 2010-08-06
 # Based on setup instructions at https://docs.google.com/document/edit?id=1s2PG8GdWcovi9z8uCBiiHGBzALFQqt4noqLL4ADUbUw&hl=en
+# Updated by scor, see history at https://github.com/scor/pifr_setup
 
 SOURCES=http://randyfay.com/files/pifr.sources.list
 HOSTNAME=$(date +%Y%m%d)$RANDOM-pifr-mysql
