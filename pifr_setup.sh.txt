@@ -1,0 +1,44 @@
+#!/bin/bash
+# PIFR puppet configuration script
+# rfay 2010-08-06
+# Based on setup instructions at https://docs.google.com/document/edit?id=1s2PG8GdWcovi9z8uCBiiHGBzALFQqt4noqLL4ADUbUw&hl=en
+
+SOURCES=http://randyfay.com/files/pifr.sources.list
+HOSTNAME=pifr-mysql
+
+echo "Setting up a PIFR client"
+if ! test -d ~/.ssh ; then
+  mkdir .ssh
+  chmod 0600 .ssh
+fi
+echo "Please paste your ssh public key here, followed by ctrl-d"
+cat >>~/.ssh/authorized_keys
+
+chmod 600 ~/.ssh/authorized_keys
+echo "Your key has been authorized for access. Please try ssh root@thishost."
+
+echo $HOSTNAME >/etc/hostname
+echo "127.0.0.1 $HOSTNAME" >>/etc/hosts
+hostname $HOSTNAME
+
+apt-get -qq -y update
+apt-get -qq -y install rsync locales
+
+# Set the locale so it doesn't while all the time
+echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
+/usr/sbin/locale-gen
+
+wget $SOURCES -O /etc/apt/sources.list
+apt-get -qq -y update 
+apt-get -qq -y --force-yes install debian-backports-keyring
+apt-get -qq -y update
+apt-get -qq  -y -t lenny-backports install puppet
+
+echo "Beginning puppet install"
+puppetd --test --server puppet.damz.org 2>&1 | tee ~/puppetd.out
+
+echo "Puppet install complete. Please examine ~/puppetd.out"
+echo "If you find failures like dependency failures, you may have to run puppetd --test --server puppet.damz.org again"
+wget http://randyfay.com/files/drupaltestbot.sql.gz
+gzip -dc drupaltestbot.sql.gz | mysql drupaltestbot
+echo "Connect to and configure this instance config at admin/pifr"
