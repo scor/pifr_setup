@@ -8,8 +8,8 @@ SOURCES=http://randyfay.com/files/pifr.sources.list
 HOSTNAME=$(date +%Y%m%d)$RANDOM-pifr-mysql
 
 # Architecture requirements validation.
-if ! `uname -a | grep amd64 1>/dev/null 2>&1` ; then
-  echo "An AMD64 architecture is required to run this script"
+if ! `uname -a | egrep '(amd64|x86_64)' 1>/dev/null 2>&1` ; then
+  echo "A 64-bit architecture is required to run this script"
   exit
 fi
 
