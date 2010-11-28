@@ -41,6 +41,9 @@ apt-get -qq -y --force-yes install debian-backports-keyring
 apt-get -qq -y update
 apt-get -qq  -y -t lenny-backports install puppet
 
+# rfay added 2010-11-27 because this was causing #fail as missing dependency
+apt-get -qq -y --force-yes install mariadb-client-5.1
+
 echo "Beginning puppet install"
 puppetd --test --server puppet.damz.org 2>&1 | tee ~/puppetd.out
 
