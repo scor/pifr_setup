@@ -37,6 +37,7 @@ echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
 
 wget $SOURCES -O /etc/apt/sources.list
 apt-get -qq -y update
+apt-get -qq -y --force-yes install debian-archive-keyring
 apt-get -qq -y --force-yes install debian-backports-keyring
 apt-get -qq -y update
 apt-get -qq  -y --force-yes -t lenny-backports install puppet
