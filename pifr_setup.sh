@@ -50,6 +50,7 @@ apt-get -qq -y --force-yes install debian-archive-keyring
 apt-get -qq -y --force-yes install debian-backports-keyring
 apt-get -qq -y update
 apt-get -qq  -y --force-yes -t lenny-backports install puppet
+apt-get -q -y --force-yes -t lenny-backports install git-core
 
 # rfay added 2010-11-27 because this was causing #fail as missing dependency
 #apt-get -qq -y --force-yes install mariadb-client-5.1
