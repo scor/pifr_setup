@@ -1,10 +1,8 @@
 #!/bin/bash
 # PIFR puppet configuration script
-# rfay 2010-08-06
 # Based on setup instructions at https://docs.google.com/document/edit?id=1s2PG8GdWcovi9z8uCBiiHGBzALFQqt4noqLL4ADUbUw&hl=en
-# Updated by scor, see history at https://github.com/scor/pifr_setup
+# This lives at https://github.com/scor/pifr_setup.
 
-SOURCES=http://randyfay.com/files/pifr.sources.list
 HOSTNAME=$(date +%Y%m%d)$RANDOM-pifr-mysql
 
 # Architecture requirements validation.
@@ -24,18 +22,29 @@ cat >>~/.ssh/authorized_keys
 chmod 600 ~/.ssh/authorized_keys
 echo "Your key has been authorized for access. Please try ssh root@thishost."
 
+read -p "What ethernet interface is primary? eth0 is default>" iface
+
+if test "$iface" = ""; then
+  iface=eth0
+fi
+
+ip_addr=$(ifconfig $iface | grep "inet addr:" | awk -F"[: ]*" '{print $4}')
+
+
 echo $HOSTNAME >/etc/hostname
-echo "127.0.0.1 $HOSTNAME" >>/etc/hosts
+grep -v pifr-mysql /etc/hosts >/tmp/hosts.clean.txt
+cp /tmp/hosts.clean.txt /etc/hosts
+echo "$ip_addr $HOSTNAME" >>/etc/hosts
 hostname $HOSTNAME
 
 apt-get -qq -y update
 apt-get -qq -y install rsync locales
+cp sources.list /etc/apt/
 
 # Set the locale so it doesn't while all the time
 echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
 /usr/sbin/locale-gen
 
-wget $SOURCES -O /etc/apt/sources.list
 apt-get -qq -y update
 apt-get -qq -y --force-yes install debian-archive-keyring
 apt-get -qq -y --force-yes install debian-backports-keyring
@@ -43,13 +52,18 @@ apt-get -qq -y update
 apt-get -qq  -y --force-yes -t lenny-backports install puppet
 
 # rfay added 2010-11-27 because this was causing #fail as missing dependency
-apt-get -qq -y --force-yes install mariadb-client-5.1
+#apt-get -qq -y --force-yes install mariadb-client-5.1
+
+
+# We may have changed the hostname of the machine if running this script
+# again, so clean up puppet's keys
+find /etc/puppet -type f | xargs rm
 
 echo "Beginning puppet install"
 puppetd --test --server puppet.damz.org 2>&1 | tee ~/puppetd.out
 
+gzip -dc drupaltestbot.sql.gz | mysql drupaltestbot
+
 echo "Puppet install complete. Please examine ~/puppetd.out"
 echo "If you find failures like dependency failures, you may have to run puppetd --test --server puppet.damz.org again"
-wget http://randyfay.com/files/drupaltestbot.sql.gz
-gzip -dc drupaltestbot.sql.gz | mysql drupaltestbot
 echo "Connect to and configure this instance config at admin/pifr"
