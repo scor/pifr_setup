@@ -47,14 +47,9 @@ echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
 
 apt-get -qq -y update
 apt-get -qq -y --force-yes install debian-archive-keyring
-apt-get -qq -y --force-yes install debian-backports-keyring
 apt-get -qq -y update
 apt-get -qq  -y --force-yes -t lenny-backports install puppet
 apt-get -q -y --force-yes -t lenny-backports install git-core
-
-# rfay added 2010-11-27 because this was causing #fail as missing dependency
-#apt-get -qq -y --force-yes install mariadb-client-5.1
-
 
 # We may have changed the hostname of the machine if running this script
 # again, so clean up puppet's keys
