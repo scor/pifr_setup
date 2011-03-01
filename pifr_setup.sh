@@ -16,7 +16,15 @@ if ! test -d ~/.ssh ; then
   mkdir .ssh
   chmod 0600 .ssh
 fi
-echo "Please paste your ssh public key here, followed by ctrl-d"
+
+echo "Are you willing to let this authorized_keys file allow root access to the listed people?"
+cat authorized_keys
+read -p "If you are willing, please type yes>" authkeys
+if test "$authkeys" = "yes"; then
+  cat authorized_keys >>~/.ssh/authorized_keys
+fi
+
+echo "Please paste your own ssh public key here, followed by ctrl-d"
 cat >>~/.ssh/authorized_keys
 
 chmod 600 ~/.ssh/authorized_keys
@@ -48,6 +56,8 @@ echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
 apt-get -qq -y update
 apt-get -qq -y --force-yes install debian-archive-keyring
 apt-get -qq -y update
+
+# We force these here because puppet isn't so good at specifying particular packages.
 apt-get -qq  -y --force-yes -t lenny-backports install puppet
 apt-get -q -y --force-yes -t lenny-backports install git-core
 
