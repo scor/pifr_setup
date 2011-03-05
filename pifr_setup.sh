@@ -60,6 +60,7 @@ apt-get -qq -y update
 # We force these here because puppet isn't so good at specifying particular packages.
 apt-get -qq  -y --force-yes -t lenny-backports install puppet
 apt-get -q -y --force-yes -t lenny-backports install git-core
+apt-get -q -y --force-yes -t lenny-backports install patch
 
 # We may have changed the hostname of the machine if running this script
 # again, so clean up puppet's keys
